@@ -32,7 +32,7 @@ function EncryptedInput({ setEncrypted, setMessageLength }) {
         <div className="input-container">
             <h1>Enter All Encrypted Messages</h1>
             <h3>One message per line. Messages should be in hexadecimal format.</h3>
-            <textarea ref={ref} rows={15} value={`000d16251c07044b36171c0307280858291403500a2003450029001e5930070e52
+            <textarea ref={ref} rows={15} defaultValue={`000d16251c07044b36171c0307280858291403500a2003450029001e5930070e52
 0d0d15713c49000a2c521d120f224f0125004d00163d100011380d0359330a0b4d
 151f00221a04064b2d1c0a571a2f021d6a050c145326054505231311102a084701
 0d091c71020c4308231c4f1a0f2d0a582c0003501c295624103e0008592a001001
