@@ -1,0 +1,18 @@
+.input-container {
+    min-width: 600px;
+    width: 50%;
+}
+
+.input-container h1, .input-container h3 {
+    margin: 0;
+}
+
+.input-container textarea {
+    margin: .5rem 0;
+    width: 100%;
+}
+
+.input-container button {
+    display: block;
+
+}

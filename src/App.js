@@ -1,5 +1,10 @@
+import { useState } from "react";
+import EncryptedInput from "./EncryptedInput";
+
 function App() {
-    return ('Here we go');
+    const [encrypted, setEncrypted] = useState([]);
+    if (!encrypted.length)
+        return <EncryptedInput setEncrypted={setEncrypted} />;
 }
 
 export default App;
