@@ -1,19 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { change2DIndex, changeIndex, clamp, cToO, decode, encode, isEnglish, oToC, toCells } from "./helpers";
 import "./ManyTimePad.css";
 
-const toCells = (data) => data.map((d, i) => <td key={i}>{d}</td>);
-const changeIndex = (array, i, value) => array.map((a, j) => j === i ? value : a);
-const change2DIndex = (array, i, j, value) => {
-    return array.map((a, k) => a.map((b, l) => i === k && j === l ? value : b));
-};
-const clamp = (value, min, max) => value < min ? min : (value > max ? max : value);
-const oToC = (ord) => String.fromCharCode(Number(ord));
-const cToO = (char) => BigInt(char.charCodeAt(0));
-
-function ManyTimePad({ encrypted, messageLength }) {
+function ManyTimePad({ encrypted, messageLength, word }) {
     const [focus, setFocus] = useState([0, 0]);
     const [guesses, setGuesses] = useState(Array.from(Array(encrypted.length), () => Array.from(Array(messageLength), () => '')));
     const [openCols, setOpenCols] = useState(Array.from(Array(messageLength), () => [true, 0]));
+    const [positions, setPositions] = useState({});
     const focusRef = useRef(null);
 
     useEffect(() => {
@@ -23,9 +16,39 @@ function ManyTimePad({ encrypted, messageLength }) {
         }
     }, [focus]);
 
+    useEffect(() => {
+        if (word) {
+            const newPositions = {};
+            const encoded = encode(word); 
+            for (let i = 0; i < encrypted.length; i++) {
+                for (let k = 0; k <= messageLength - word.length; k++) {
+                    let possible = true;
+                    for (let j = 0; j < encrypted.length; j++) {
+                        if (i === j) continue;
+
+                        const combo = encrypted[i] ^ encrypted[j];
+                        const trimmedCombo = (combo >> (8n * BigInt(messageLength - word.length - k))) & ((1n << (8n * BigInt(word.length))) - 1n);
+                        possible &&= isEnglish(decode(trimmedCombo ^ encoded));
+                    }
+
+                    if(possible) {
+                        if (newPositions[i])
+                            newPositions[i].push(k);
+                        else
+                            newPositions[i] = [k];
+                    }
+                }
+            }
+
+            setPositions(newPositions);
+        } else {
+            setPositions({});
+        }
+    }, [word]);
+
     const handleKeys = (i, j) => (e) => {
         switch (e.keyCode) {
-            case 8: // Backspace
+            case 8:  // Backspace
                 if (!e.target || e.target.value)
                     break
             case 37: // Left
@@ -68,12 +91,13 @@ function ManyTimePad({ encrypted, messageLength }) {
             const disabled = !openCols[j][0] && openCols[j][1] !== i;
             let decrypt;
             if (disabled) 
-                decrypt = cToO(guesses[openCols[j][1]][j]) ^ ((encrypted[openCols[j][1]] >> (8n * BigInt(i))) & 255n) ^ char;
+                decrypt = cToO(guesses[openCols[j][1]][j]) ^ ((encrypted[openCols[j][1]] >> (8n * BigInt(messageLength - 1 - j))) & 255n) ^ char;
             const value = disabled ? oToC(decrypt) : guesses[i][j];
             const focused = i === focus[0] && j === focus[1];
+            const style = positions[i] && positions[i].includes(j) ? { borderColor: 'green' } : {};
             guessInputs.unshift(
                 <input type="text" ref={focused ? focusRef : undefined} onChange={guess(i, j)}
-                       onKeyDown={handleKeys(i, j)} value={value} disabled={disabled}/>
+                       onKeyDown={handleKeys(i, j)} value={value} disabled={disabled} style={style} />
             );
         }
 
