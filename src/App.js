@@ -14,7 +14,7 @@ function App() {
         return (
             <>
                 <WordInput setWord={setWord} />
-                <ManyTimePad encrypted={encrypted} messageLength={messageLength} word={word} />;
+                <ManyTimePad encrypted={encrypted} messageLength={messageLength} word={word} />
             </>
         );
     }

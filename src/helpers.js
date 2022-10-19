@@ -1,5 +1,4 @@
-// const englishRegex = /^[!-\/:-@[-`{-~]?(?:[a-z 0-9]+[!-\/:-@[-`{-~]?)*$/i;
-const englishRegex = /^[.,!?'\-]?(?:[a-z 0-9]+[.,!?'\-]?)*$/i;
+const englishRegex = /^[.,!?'-]?(?:[a-z 0-9]+[.,!?'-]?)*$/i;
 
 export const toCells = (data) => data.map((d, i) => <td key={i}>{d}</td>);
 

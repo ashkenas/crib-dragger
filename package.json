@@ -25,6 +25,9 @@
         ],
         "env": {
             "es2020": true
+        },
+        "rules": {
+            "no-fallthrough": 0
         }
     },
     "browserslist": {

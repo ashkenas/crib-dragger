@@ -3,6 +3,7 @@ import { change2DIndex, changeIndex, clamp, cToO, decode, encode, isEnglish, oTo
 import "./ManyTimePad.css";
 
 function ManyTimePad({ encrypted, messageLength, word }) {
+    const [editMode, setEditMode] = useState(true);
     const [focus, setFocus] = useState([0, 0]);
     const [guesses, setGuesses] = useState(Array.from(Array(encrypted.length), () => Array.from(Array(messageLength), () => '')));
     const [openCols, setOpenCols] = useState(Array.from(Array(messageLength), () => [true, 0]));
@@ -44,7 +45,7 @@ function ManyTimePad({ encrypted, messageLength, word }) {
         } else {
             setPositions({});
         }
-    }, [word]);
+    }, [word, encrypted, messageLength]);
 
     const handleKeys = (i, j) => (e) => {
         switch (e.keyCode) {
@@ -78,9 +79,11 @@ function ManyTimePad({ encrypted, messageLength, word }) {
     };
 
     const rows = [];
+    const plaintext = [];
     for (let i = 0; i < encrypted.length; i++) {
         const messageChars = [];
         const guessInputs = [];
+        let plainMsg = "";
         let message = encrypted[i];
 
         for (let j = messageLength - 1; j >= 0; j--) {
@@ -90,9 +93,12 @@ function ManyTimePad({ encrypted, messageLength, word }) {
 
             const disabled = !openCols[j][0] && openCols[j][1] !== i;
             let decrypt;
-            if (disabled) 
-                decrypt = cToO(guesses[openCols[j][1]][j]) ^ ((encrypted[openCols[j][1]] >> (8n * BigInt(messageLength - 1 - j))) & 255n) ^ char;
+            if (disabled) {
+                const keyChar = cToO(guesses[openCols[j][1]][j]) ^ ((encrypted[openCols[j][1]] >> (8n * BigInt(messageLength - 1 - j))) & 255n);
+                decrypt = keyChar ^ char;
+            }
             const value = disabled ? oToC(decrypt) : guesses[i][j];
+            plainMsg = (value ? value : oToC(char)) + plainMsg;
             const focused = i === focus[0] && j === focus[1];
             const style = positions[i] && positions[i].includes(j) ? { borderColor: 'green' } : {};
             guessInputs.unshift(
@@ -103,15 +109,27 @@ function ManyTimePad({ encrypted, messageLength, word }) {
 
         rows.push(<tr key={i}>{toCells(messageChars)}</tr>);
         rows.push(<tr key={i + messageLength}>{toCells(guessInputs)}</tr>);
+        plaintext.push(<p key={i}>{plainMsg}</p>);
     }
 
     return (
-        <table>
-            <tbody>
-                {rows}
-            </tbody>
-        </table>
-    )
+        <>
+            {editMode ? (
+                <table>
+                    <tbody>
+                        {rows}
+                    </tbody>
+                </table>
+            ) : (
+                <code>
+                    {plaintext}
+                </code>
+            )}
+            <div class="mtp-buttons">
+                <button onClick={() => setEditMode(!editMode)}>{editMode ? 'View' : 'Edit'}</button>
+            </div>
+        </>
+    );
 }
 
 export default ManyTimePad;
