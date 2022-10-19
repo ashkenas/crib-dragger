@@ -1,15 +1,11 @@
-td input {
+.mtp-crib td, .mtp-crib input {
     width: 1.5ch;
 }
 
-td {
+.mtp-crib td {
     text-align: center;
 }
 
-.mtp-buttons {
-    
-}
-
-.mtp-buttons button {
-
+.mtp-key th {
+    text-align: center;
 }
