@@ -1,22 +1,78 @@
 .input-container {
-    min-width: 600px;
-    width: 50%;
+  margin: auto;
+  max-width: 720px;
 }
 
-.input-container h1, .input-container h3 {
-    margin: 0;
+.input-container strong {
+  font-weight: bold;
+  text-shadow: 0 0 3px;
 }
 
-.input-container h5 {
-    margin: 0 0 .75rem 0;
+.input-container label {
+  font-weight: bold;
+  text-shadow: 0 0 3px;
+}
+
+.input-container h1 {
+  color: #a37bff;
+  text-shadow: 0 0 4px;
+  text-align: center;
+  margin: 0;
+  padding: 2rem 0 1rem 0;
+}
+
+.input-container .error {
+  color: #f56d6d;
+  font-weight: bold;
+  text-shadow: 0 0 3px;
+  margin: 0 0 .75rem 0;
 }
 
 .input-container textarea {
-    margin: .5rem 0;
-    width: 100%;
+  display: block;
+  margin: .5rem 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  background-color: #464646;
+  border: 1px solid #767676;
+  resize: vertical;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: inherit;
+  color: inherit;
+}
+
+.input-container textarea:focus,
+.input-container textarea:focus-visible {
+  border: 1px solid #a37bff;
+  outline: 1px solid #a37bff80;
 }
 
 .input-container button {
-    display: block;
+  display: block;
+  width: 100%;
+  padding: .5rem;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+  background-color: #a37bff;
+  border: none;
+  transition: transform .1s, box-shadow .1s, background-color .1s;
+  box-shadow: 0 3px 0 0 #a37bff80;
+}
 
+.input-container button:hover,
+.input-container button:focus,
+.input-container button:focus-visible {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 0 #a37bff80;
+  background-color: #a37bffE0;
+  outline: none;
+}
+
+.input-container button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 #a37bff80;
+  background-color: #a37bffE0;
 }

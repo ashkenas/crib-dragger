@@ -1,42 +1,53 @@
-import { useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import "./EncryptedInput.css";
 
-function EncryptedInput({ setEncrypted, setMessageLength }) {
-    const ref = useRef(null);
-    const [error, setError] = useState(false);
+export default function EncryptedInput({ setEncrypted }) {
+  const [error, setError] = useState(false);
 
-    const submit = () => {
-        if (!ref.current) return;
+  const onSubmit = useCallback((e) => {
+    e.preventDefault();
 
-        const messages = ref.current.value.split('\n').map((m) => m.trim()).filter((m) => m);
-        if (messages.length < 2) {
-            setError('Must provide at least two messages!');
-            return;
-        }
+    const data = new FormData(e.target);
 
-        const lengths = messages.map((m) => m.length);
-        const allSameLength = lengths.reduce((p, c) => p === c ? c : false, lengths[0]);
-        if (!allSameLength) {
-            setError('Messages are not all the same length.');
-        } else {
-            try {
-                setEncrypted(messages.map((m) => BigInt(`0x${m}`)));
-                setMessageLength(messages[0].length / 2);
-            } catch (e) {
-                setError('Invalid hexadecimal!');
-            }
-        }
-    };
+    const messages = data.get('encrypted')
+      .split('\n')
+      .map((m) => m.trim())
+      .filter((m) => m);
+    if (messages.length < 2) {
+      setError('Must provide at least two messages!');
+      return;
+    }
 
-    return (
-        <div className="input-container">
-            <h1>Enter All Encrypted Messages</h1>
-            <h3>One message per line. Messages should be in hexadecimal format.</h3>
-            <textarea ref={ref} rows={15}></textarea>
-            {error && <h5 style={{color: 'red'}}>{error}</h5>}
-            <button onClick={submit}>Begin</button>
-        </div>
-    )
+    const sameLength = messages.every((m) => m.length === messages[0].length);
+    if (!sameLength) {
+      setError('The provided messages must all be the same length.');
+    } else if (messages[0].length % 2 !== 0) {
+      setError('The provided messages each have an odd length; odd-length '
+        + 'hexadecimal cannot be converted back to ascii.');
+    } else {
+      try {
+        setEncrypted(messages.map((m) => BigInt(`0x${m}`)));
+      } catch (e) {
+        setError('At least one message is not valid hexadecimal.');
+      }
+    }
+  }, [setError, setEncrypted]);
+
+  return (
+    <div className="input-container">
+      <h1>Crib Dragger</h1>
+      <p>
+        This tool can be used to crack what's known as the <strong>Many Time
+        Pad Vulnerability</strong>. Unlike other tools made for this purpose,
+        this one enables the user to check more than two messages at once.
+      </p>
+      <label htmlFor="entry">Encrypted Message Entry</label>
+      <p>One message per line. Messages should be in hexadecimal format.</p>
+      {error && <p className="error">{error}</p>}
+      <form onSubmit={onSubmit}>
+        <textarea id="entry" name="encrypted" rows={14} />
+        <button type="submit">Begin Decryption</button>
+      </form>
+    </div>
+  );
 };
-
-export default EncryptedInput;
