@@ -3,9 +3,9 @@ import EncryptedInput from "./EncryptedInput";
 import DecryptingPage from "./DecryptingPage";
 
 export default function App() {
-	const [encrypted, setEncrypted] = useState([]);
+	const [data, setData] = useState(null);
 
-	if (!encrypted.length)
-		return <EncryptedInput setEncrypted={setEncrypted} />;
-	else return <DecryptingPage encrypted={encrypted} />;
+	if (!data)
+		return <EncryptedInput setData={setData} />;
+	else return <DecryptingPage data={data} />;
 };

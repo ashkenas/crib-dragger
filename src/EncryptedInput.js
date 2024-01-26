@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import "./EncryptedInput.css";
 
-export default function EncryptedInput({ setEncrypted }) {
+export default function EncryptedInput({ setData }) {
   const [error, setError] = useState(false);
 
   const onSubmit = useCallback((e) => {
@@ -26,12 +26,15 @@ export default function EncryptedInput({ setEncrypted }) {
         + 'hexadecimal cannot be converted back to ascii.');
     } else {
       try {
-        setEncrypted(messages.map((m) => BigInt(`0x${m}`)));
+        setData({
+          encrypted: messages.map((m) => BigInt(`0x${m}`)),
+          messageLength: messages[0].length / 2
+        });
       } catch (e) {
         setError('At least one message is not valid hexadecimal.');
       }
     }
-  }, [setError, setEncrypted]);
+  }, [setError, setData]);
 
   return (
     <div className="input-container">

@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { change2DIndex, changeIndex, clamp, cToO, decode, encode, isEnglish, oToC, toCells } from "./helpers";
 import "./CribDragger.css";
 
-export default function CribDragger({ encrypted, messageLength, word }) {
+export default function CribDragger({ data, word }) {
+  const { encrypted, messageLength } = data;
   const [editMode, setEditMode] = useState(true);
   const [focus, setFocus] = useState([0, 0]);
   const [guesses, setGuesses] = useState(Array.from(Array(encrypted.length), () => Array.from(Array(messageLength), () => '')));
@@ -98,12 +99,17 @@ export default function CribDragger({ encrypted, messageLength, word }) {
       const disabled = !openCols[j][0] && openCols[j][1] !== i;
       const decrypt = openCols[j][2] ^ char;
       const value = disabled ? oToC(decrypt) : guesses[i][j];
-      plainMsg = (value ? value : oToC(char)) + plainMsg;
+      plainMsg = (value ? value : '-') + plainMsg;
       const focused = i === focus[0] && j === focus[1];
-      const style = positions[i] && positions[i].includes(j) ? { borderColor: 'green' } : {};
+      const className = positions[i] && positions[i].includes(j) ? 'suggest' : '';
       guessInputs.unshift(
-        <input type="text" ref={focused ? focusRef : undefined} onChange={guess(i, j)}
-          onKeyDown={handleKeys(i, j)} value={value} disabled={disabled} style={style} />
+        <input type="text"
+          ref={focused ? focusRef : undefined}
+          onChange={guess(i, j)}
+          onKeyDown={handleKeys(i, j)}
+          value={value}
+          disabled={disabled}
+          className={className} />
       );
     }
 
@@ -115,17 +121,21 @@ export default function CribDragger({ encrypted, messageLength, word }) {
   return (
     <>
       {editMode ? (
-        <table className="mtp-crib">
-          <tbody>
-            {rows}
-          </tbody>
-        </table>
+        <div className="crib-container">
+          <table className="mtp-crib">
+            <tbody>
+              {rows}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <code>
           {plaintext}
         </code>
       )}
-      <button onClick={() => setEditMode(!editMode)}>{editMode ? 'View' : 'Edit'}</button>
+      <button onClick={() => setEditMode(!editMode)}>
+        {editMode ? 'Preview Plaintext' : 'Resume Decryption'}
+      </button>
       <table className="mtp-key">
         <thead>
           <tr>
@@ -135,7 +145,7 @@ export default function CribDragger({ encrypted, messageLength, word }) {
         <tbody>
           <tr>
             <th>Text</th>
-            <td>{openCols.map((e) => oToC(e[2])).join('')}</td>
+            <td>{openCols.map((e) => e[2] ? oToC(e[2]) : '-').join('')}</td>
           </tr>
           <tr>
             <th>Hex</th>

@@ -16,3 +16,55 @@ html, body {
   width: 100%;
   height: 100%;
 }
+
+label {
+  font-weight: bold;
+  text-shadow: 0 0 2px;
+}
+
+textarea, input {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: inherit;
+  color: inherit;
+  background-color: #464646;
+  border: 1px solid #767676;
+  border-radius: 4px;
+}
+
+textarea:focus,
+textarea:focus-visible,
+input:focus,
+input:focus-visible {
+  border: 1px solid #a37bff;
+  outline: 1px solid #a37bff80;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: .5rem;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+  background-color: #a37bff;
+  border: none;
+  border-radius: 4px;
+  transition: transform .1s, box-shadow .1s, background-color .1s;
+  box-shadow: 0 3px 0 0 #a37bff80;
+}
+
+button:hover,
+button:focus,
+button:focus-visible {
+  transform: translateY(1px);
+  box-shadow: 0 2px 0 0 #a37bff80;
+  background-color: #a37bffE0;
+  outline: none;
+}
+
+button:active {
+  transform: translateY(3px);
+  box-shadow: 0 0 0 0 #a37bff80;
+  background-color: #a37bffE0;
+}
